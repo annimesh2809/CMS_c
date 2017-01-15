@@ -3,6 +3,7 @@
 #include "def_struct.h"
 
 int NET_USERS = 0;
+int NET_CONF = 0;
 
 void main_login_portal();
 
@@ -136,6 +137,7 @@ void register_portal(){
 	p.UID = ++NET_USERS;
 	p.type = (enum UType)getchoice("1) Organizing Committee\n2) Program Committee\n3) Reviewer\n4) Author",4);
 	writeUserF(p);
+	printf("Successfully registered\n");
 }
 
 void main_login_portal(){
@@ -171,6 +173,26 @@ void load_data(){
 		fclose(uf);
 		printf("Created new user data file\n");
 		NET_USERS = 0;
+	}
+
+	//for NETCONF
+	FILE *cf = fopen(CONF_FILE,"rb");
+	if(cf){
+		struct Conference conf;
+		while(fread(&conf,sizeof(struct Conference),1,cf)){
+			if(&conf!=NULL){
+				NET_CONF++;
+			}
+		}
+		printf("Total registered conferences: %d\n", NET_CONF);
+		fclose(cf);
+	}
+	else{
+		printf("No existing conferences data found!\n");
+		cf = fopen(CONF_FILE,"w");
+		fclose(cf);
+		printf("Created new confernces data file\n");
+		NET_CONF = 0;
 	}
 }
 

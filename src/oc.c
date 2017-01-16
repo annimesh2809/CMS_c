@@ -51,6 +51,7 @@ struct Conference* getConf(int ConfID){
 
 
 void displayConf(struct Conference* conf){
+	printf("************************** CONFERENCE DETAILS ***\n");
 	printf("Conference ID: %d\n",conf->CONFID);
 	printf("Conference Title: %s\n",conf->title);
 	printf("Date: %s\tVenue: %s\n",conf->date,conf->venue);

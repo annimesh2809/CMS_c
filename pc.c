@@ -1,5 +1,0 @@
-
-
-void pc_portal(){
-
-}

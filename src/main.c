@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "def_struct.h"
 
 int NET_USERS = 0;
@@ -29,6 +30,27 @@ int getchoice(char *s,const int MAX)
 		if(ch>MAX)
 			InputError();
 	}while(ch>MAX);
+}
+
+struct UserF* getUserByID(int UID){
+	FILE *uf = fopen(USER_FILE,"rb");
+	if(uf){
+		struct UserF *user = (struct UserF *)malloc(sizeof(struct UserF));
+		while(fread(user,sizeof(struct UserF),1,uf)){
+			if(user!=NULL){
+				if(user->UID == UID){
+					fclose(uf);
+					return user;
+				}
+			}
+		}
+		fclose(uf);
+		return NULL;
+	}
+	else{
+		FileError(USER_FILE);
+		exit(100);
+	}
 }
 
 struct UserF* getUser(char *email,char *pass){
@@ -67,26 +89,26 @@ void login_portal(){
 			break;
 		}
 		case OC:{
-			oc_portal();
+			oc_portal(user->UID);
 			break;
 		}
 		case PC:{
-			pc_portal();
+			pc_portal(user->UID);
 			break;
 		}
 		case AUTHOR:{
-			author_portal();
+			author_portal(user->UID);
 			break;
 		}
 		case REVIEWER:{
-			reviewer_portal();
+			reviewer_portal(user->UID);
 			break;
 		}
 	}
 }
 
 void writeUserF(struct UserF p){
-	FILE *uf = fopen(USER_FILE,"a");
+	FILE *uf = fopen(USER_FILE,"ab");
 	if(uf){
 		fwrite(&p,sizeof(p),1,uf);
 		fclose(uf);
@@ -103,7 +125,7 @@ int UserFfind(char *email)
 			if(&user!=NULL){
 				if(!strcmp(user.email,email)){
 					fclose(uf);
-					return 1;
+					return user.UID;
 				}
 			}
 		}
@@ -141,7 +163,7 @@ void register_portal(){
 }
 
 void main_login_portal(){
-	int ch = getchoice("\t1) Login\n\t2) Register",2);
+	int ch = getchoice("\t1) Login\n\t2) Register\n\t3) Exit",3);
 	switch(ch){
 		case 1:{
 			login_portal();
@@ -151,7 +173,11 @@ void main_login_portal(){
 			register_portal();
 			break;
 		}
+		case 3:{
+			exit(0);
+		}
 	}
+	main_login_portal();
 }
 
 void load_data(){
@@ -169,7 +195,7 @@ void load_data(){
 	}
 	else{
 		printf("No existing user data found!\n");
-		uf = fopen(USER_FILE,"w");
+		uf = fopen(USER_FILE,"wb");
 		fclose(uf);
 		printf("Created new user data file\n");
 		NET_USERS = 0;
@@ -189,7 +215,7 @@ void load_data(){
 	}
 	else{
 		printf("No existing conferences data found!\n");
-		cf = fopen(CONF_FILE,"w");
+		cf = fopen(CONF_FILE,"wb");
 		fclose(cf);
 		printf("Created new confernces data file\n");
 		NET_CONF = 0;

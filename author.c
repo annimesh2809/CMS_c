@@ -1,5 +1,0 @@
-
-
-void author_portal(){
-
-}

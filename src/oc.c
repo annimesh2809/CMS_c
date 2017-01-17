@@ -103,7 +103,7 @@ void editConference(int UID,int confID){
 			}
 			case 3:{
 				printf("Enter venue: ");
-				scanf("%s",conf->date);
+				scanf("%s",conf->venue);
 				break;
 			}
 			case 4:{
@@ -167,7 +167,7 @@ void editConference(int UID,int confID){
 void createConference(int UID){
 	struct Conference conf;
 	conf.CONFID = ++NET_CONF;
-	conf.nooc = conf.nopc = conf.nor = conf.noa = conf.noar = conf.nop = 0;
+	conf.nooc = conf.nopc = conf.nor = conf.noa = conf.nop = 0;
 	strcpy(conf.title,"None");
 	strcpy(conf.date,"None");
 	strcpy(conf.venue,"None");

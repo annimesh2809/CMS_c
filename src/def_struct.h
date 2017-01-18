@@ -39,6 +39,7 @@ struct Paper
 	struct ReviewInfo reviews[10];
 	struct _AReviewer AReviewer[_SZ];
 	char src[PATH_LENGTH];
+	int isallowed;
 	int isaccepted;
 };
 

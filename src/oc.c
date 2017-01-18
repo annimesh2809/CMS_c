@@ -22,6 +22,7 @@ void updateConfF(struct Conference conf)
 			if(conf.CONFID == temp.CONFID){
 				fseek(cf,-sizeof(struct Conference),SEEK_CUR);
 				fwrite(&conf,sizeof(struct Conference),1,cf);
+				fflush(cf);
 				fclose(cf);
 				return;
 			}
@@ -70,7 +71,7 @@ void displayConf(struct Conference* conf){
 		printf("%d %d %s\n", i+1,u->UID,u->name);
 		free(u);
 	}
-	printf("Assigned Reviewers (%d): \n",conf->nor);
+	printf("Reviewers (%d): \n",conf->nor);
 	for(int i=0;i<conf->nor;i++){
 		struct UserF *u = getUserByID(conf->RID[i]);
 		printf("%d %d %s\n", i+1,u->UID,u->name);
@@ -78,7 +79,7 @@ void displayConf(struct Conference* conf){
 	}
 	printf("Authors (%d): \n",conf->noa);
 	for(int i=0;i<conf->noa;i++){
-		struct UserF *u = getUserByID(conf->PCID[i]);
+		struct UserF *u = getUserByID(conf->AID[i]);
 		printf("%d %d %s\n", i+1,u->UID,u->name);
 		free(u);
 	}
@@ -173,7 +174,15 @@ void createConference(int UID){
 	strcpy(conf.venue,"None");
 	strcpy(conf.tc,"None");
 	strcpy(conf.dl,"None");
+	conf.ReviewsCompleted = 0;
 	conf.OCID[conf.nooc ++] = UID;
+	for(int i=0;i<MAX_PAPERS;i++)
+	{
+		for(int j=0;j<10;j++)
+		{
+			conf.papers[i].reviews[j].isaccepted = -1;
+		}
+	}
 	updateConfF(conf);
 	editConference(UID,conf.CONFID);
 }

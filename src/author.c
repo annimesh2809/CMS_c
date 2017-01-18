@@ -7,7 +7,7 @@ struct Conference* getConf(int);
 int getchoice(char* ,int);
 void displayConf(struct Conference *);
 struct UserF *getUserByID(int);
-void updateConfF(struct Conference *);
+void updateConfF(struct Conference);
 void main_login_portal();
 
 void welcome_author(){
@@ -38,21 +38,35 @@ void displayReview(struct ReviewInfo *review){
 	}
 }
 
+void displayPaper(char *src){
+	char CMD[PATH_LENGTH*2];
+	strcpy(CMD,"f='");
+	strcat(CMD,src);
+	strcat(CMD,"'; if [ ! -f $f ]; then echo 'File does not exist'; else cat $f; fi;");
+	system(CMD);
+}
+
 void displayPaperDetails(struct Paper p)
 {
 	printf("Paper ID: %d\n",p.PID);
 	struct UserF *u = getUserByID(p.AID);
 	printf("Author: %s\n",u->name);
 	free(u);
-	printf("Accpeted: %s\n",(p.isaccepted >=0) ? (p.isaccepted?"True":"False") : "Waiting");
-	printf("Assigned Reviewers: \n");
-	for(int i=0;i<p.noar;i++)
-		printf("%d) %s\n",i+1,p.AReviewer[i].email);
-	printf("Reviews: \n");
-	for(int i=0;i<p.nor;i++)
-	{
-		displayReview(&p.reviews[i]);
+	if(p.isallowed == 1){
+		printf("Accpeted for publication: %s\n",(p.isaccepted >=0) ? (p.isaccepted?"True":"False") : "Waiting");
+		printf("Assigned Reviewers: \n");
+		for(int i=0;i<p.noar;i++)
+			printf("%d) %s\n",i+1,p.AReviewer[i].email);
+		printf("Reviews: \n");
+		for(int i=0;i<p.nor;i++)
+		{
+			displayReview(&p.reviews[i]);
+		}
 	}
+	else if(p.isallowed == -1){
+		printf("Waiting for screening process\n");
+	}
+	else printf("Declined by program committee\n");
 	printf("Location: %s\n",p.src);
 }
 
@@ -131,8 +145,12 @@ void editPaper(int PID,int ConfID)
 			}
 			case 5:{
 				struct Conference *Conf = getConf(ConfID);
-				Conf->papers[PID] = *p;
-				updateConfF(Conf);
+				for(int i=0;i<Conf->nop;i++)
+					if(Conf->papers[i].PID == PID){
+						Conf->papers[PID] = *p;
+						break;
+					}
+				updateConfF(*Conf);
 				free(p);
 				return;
 			}
@@ -149,7 +167,7 @@ void removePaper(int ConfID,int PID){
 			break;
 		}
 	}
-	updateConfF(Conf);
+	updateConfF(*Conf);
 	free(Conf);
 }
 
@@ -160,16 +178,16 @@ void author_portal(int UID){
 	struct Conference *Conf = getConf(ConfID);
 	displayConf(Conf);
 	int len;
-	struct Paper *p = getPapersByAuthor(UID,ConfID,&len);
+	struct Paper *_p = getPapersByAuthor(UID,ConfID,&len);
 	if(len){
 		printf("Your submissions:\n");
 		for(int i=0;i<len;i++)
 		{
-			displayPaperDetails(p[i]);
+			displayPaperDetails(_p[i]);
 		}
 	}
 	else printf("You have not submitted any papers yet\n");
-	free(p);
+	free(_p);
 	int ch = getchoice("1) Add a paper\n2) Edit a submitted paper\n3) Remove a paper\n4) Logout",4);
 	switch(ch){
 		case 1:{
@@ -183,13 +201,15 @@ void author_portal(int UID){
 					ispresent = 1;
 			if(!ispresent)
 				Conf->AID[Conf->noa ++] = UID;
+			printf("UID: %d\n", UID);
 			strcpy(p.src,"None");
 			strcpy(p.title,"None");
 			strcpy(p.abstract,"None");
 			strcpy(p.affiliation,"None");
+			p.isallowed = -1;
 			p.isaccepted = -1;
 			Conf->papers[Conf->nop -1] = p;
-			updateConfF(Conf);
+			updateConfF(*Conf);
 			editPaper(p.PID,Conf->CONFID);
 			break;
 		}

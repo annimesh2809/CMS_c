@@ -5,6 +5,7 @@
 #define _SZ 10
 #define USER_FILE "build/users.dat"
 #define CONF_FILE "build/conf.dat"
+#define CLEAR system("clear")
 
 extern int NET_USERS;
 extern int NET_CONF;
@@ -15,17 +16,19 @@ void reviewer_portal(int);
 void author_portal(int);
 struct UserF* getUserByID(int);
 int getchoice(char *,int);
+struct Conference* getConf(int);
+void updateConfF(struct Conference);
+//void displayPaperDetails(struct Paper);
 
 struct _AReviewer
 {
 	char email[30];
-	char pass[PASS_LENGTH];
 };
 
 struct ReviewInfo
 {
 	int RID;
-	int rating;			//out of 10
+	int rating;			//out of 1-10
 	char details[50];
 	int isaccepted;
 };

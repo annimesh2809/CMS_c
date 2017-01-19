@@ -145,11 +145,15 @@ void editPaper(int PID,int ConfID)
 			}
 			case 5:{
 				struct Conference *Conf = getConf(ConfID);
+				int x;
 				for(int i=0;i<Conf->nop;i++)
 					if(Conf->papers[i].PID == PID){
-						Conf->papers[PID] = *p;
+						Conf->papers[i] = *p;
+						printf("conf: %s, paper: %s\n",Conf->papers[PID].src,(*p).src);
+						x= i;
 						break;
 					}
+				printf("just before: %s\n", Conf->papers[x].src);
 				updateConfF(*Conf);
 				free(p);
 				return;

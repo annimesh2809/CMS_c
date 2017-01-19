@@ -8,6 +8,8 @@ int getchoice(char* ,int);
 void FileError(const char *);
 void oc_portal(int);
 int UserFfind(char *);
+void displayConf(struct Conference *);
+void displayPaperDetails(struct Paper);
 
 void welcome_oc(){
 	printf("*** Welcome to the Organising Committee Portal ***\n");
@@ -16,6 +18,9 @@ void welcome_oc(){
 void updateConfF(struct Conference conf)
 {
 	FILE *cf = fopen(CONF_FILE,"rb+");
+	printf("in updateConfF: \n");
+	for(int i=0;i<conf.nop;i++)
+		displayPaperDetails(conf.papers[i]);
 	struct Conference temp;
 	if(cf){
 		while(fread(&temp,sizeof(struct Conference),1,cf)){
@@ -53,34 +58,35 @@ struct Conference* getConf(int ConfID){
 
 void displayConf(struct Conference* conf){
 	printf("************************** CONFERENCE DETAILS ***\n");
-	printf("Conference ID: %d\n",conf->CONFID);
-	printf("Conference Title: %s\n",conf->title);
-	printf("Date: %s\tVenue: %s\n",conf->date,conf->venue);
-	printf("Topics covered: %s\n", conf->tc);
-	printf("Deadlines: %s\n", conf->dl);
-	printf("*** Members Info ***\n");
-	printf("Organising Committee members (%d): \n",conf->nooc);
+	printf("* Conference ID: %d\n",conf->CONFID);
+	printf("* Conference Title: %s\n",conf->title);
+	printf("* Date: %s\tVenue: %s\n",conf->date,conf->venue);
+	printf("* Topics covered: %s\n", conf->tc);
+	printf("* Deadlines: %s\n\n", conf->dl);
+	printf("***** Members Info *****\n");
+	printf("********* Organising Committee members (%d): \n",conf->nooc);
+	printf("** Sl\tUID\tName\n");
 	for(int i=0;i<conf->nooc;i++){
 		struct UserF *u = getUserByID(conf->OCID[i]);
-		printf("%d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d\t%d\t%s\n", i+1,u->UID,u->name);
 		free(u);
 	}
-	printf("Program Committee members (%d): \n",conf->nopc);
+	printf("\n********* Program Committee members (%d): \n",conf->nopc);
 	for(int i=0;i<conf->nopc;i++){
 		struct UserF *u = getUserByID(conf->PCID[i]);
-		printf("%d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d %d %s\n", i+1,u->UID,u->name);
 		free(u);
 	}
-	printf("Reviewers (%d): \n",conf->nor);
+	printf("\n********* Reviewers (%d): \n",conf->nor);
 	for(int i=0;i<conf->nor;i++){
 		struct UserF *u = getUserByID(conf->RID[i]);
-		printf("%d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d %d %s\n", i+1,u->UID,u->name);
 		free(u);
 	}
-	printf("Authors (%d): \n",conf->noa);
+	printf("\n********* Authors (%d): \n",conf->noa);
 	for(int i=0;i<conf->noa;i++){
 		struct UserF *u = getUserByID(conf->AID[i]);
-		printf("%d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d %d %s\n", i+1,u->UID,u->name);
 		free(u);
 	}
 }
@@ -88,7 +94,7 @@ void displayConf(struct Conference* conf){
 void editConference(int UID,int confID){
 	struct Conference *conf = getConf(confID);
 	while(1){
-		system("clear");
+		CLEAR;
 		displayConf(conf);
 		int ch = getchoice("You can Add/Update the following entries:\n1) Title\n2) Date\n3) Venue\n4) Topics covered\n5) Deadlines\n6) Organising members\n7) Program committee members\n8) Save and exit\n",8);
 		switch(ch){

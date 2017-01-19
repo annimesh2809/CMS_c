@@ -9,7 +9,7 @@ int NET_CONF = 0;
 void main_login_portal();
 
 void welcome(){
-	printf("*** Welcome to Conference Management System ***\n");
+	printf("***** Welcome to Conference Management System *****\n");
 }
 
 void InputError(){
@@ -22,7 +22,7 @@ void FileError(const char *s){
 
 int getchoice(char *s,const int MAX)
 {
-	printf("Enter choice (1 - %d)\n", MAX);
+	printf("** Enter choice (1 - %d)\n", MAX);
 	printf("%s\n",s);
 	int ch;
 	do{
@@ -144,7 +144,7 @@ void register_portal(){
 	scanf("%s",p.email);
 	if(UserFfind(p.email))
 	{
-		printf("Email already registered! Try Loging in!\n");
+		printf("** Email already registered! Try Loging in!\n");
 		main_login_portal();
 	}
 	printf("Enter name: ");
@@ -159,7 +159,7 @@ void register_portal(){
 	p.UID = ++NET_USERS;
 	p.type = (enum UType)getchoice("1) Organizing Committee\n2) Program Committee\n3) Reviewer\n4) Author",4);
 	writeUserF(p);
-	printf("Successfully registered\n");
+	printf("** Successfully registered\n");
 }
 
 void main_login_portal(){
@@ -190,14 +190,14 @@ void load_data(){
 				NET_USERS++;
 			}
 		}
-		printf("Total registered users: %d\n", NET_USERS);
+		printf("** Total registered users: %d\n", NET_USERS);
 		fclose(uf);
 	}
 	else{
-		printf("No existing user data found!\n");
+		printf("** No existing user data found!\n");
 		uf = fopen(USER_FILE,"wb");
 		fclose(uf);
-		printf("Created new user data file\n");
+		printf("** Created new user data file\n");
 		NET_USERS = 0;
 	}
 
@@ -210,14 +210,14 @@ void load_data(){
 				NET_CONF++;
 			}
 		}
-		printf("Total registered conferences: %d\n", NET_CONF);
+		printf("** Total registered conferences: %d\n", NET_CONF);
 		fclose(cf);
 	}
 	else{
-		printf("No existing conferences data found!\n");
+		printf("** No existing conferences data found!\n");
 		cf = fopen(CONF_FILE,"wb");
 		fclose(cf);
-		printf("Created new confernces data file\n");
+		printf("** Created new confernces data file\n");
 		NET_CONF = 0;
 	}
 }

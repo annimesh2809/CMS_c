@@ -25,59 +25,64 @@ int isPCmember(int UID,int ConfID){
 }
 
 void ScreenPaper(int ConfID,int i){
-	struct Conference *Conf = getConf(ConfID);
-	displayPaperDetails(Conf->papers[i]);
-	int c = getchoice("1) Open Document\n2) Accept / Decline\n3) Add Reviewers\n4) Back",4);
-	switch(c){
-		case 1:{
-			displayPaper(Conf->papers[i].src);
-			break;
+	int isComp = 0;
+	while(1){
+		struct Conference *Conf = getConf(ConfID);
+		displayPaperDetails(Conf->papers[i]);
+		fflush(stdin);
+		int c = getchoice("1) Open Document\n2) Accept / Decline\n3) Add Reviewers\n4) Back",4);
+		switch(c){
+			case 1:{
+				displayPaper(Conf->papers[i].src);
+				break;
+			}
+			case 2:{
+				char g;
+				printf("Accept? (Y/N): ");
+				scanf(" %c",&g);
+				if(g == 'Y'|| g == 'y')
+					Conf->papers[i].isallowed = 1;
+				else Conf->papers[i].isallowed = 0;
+				break;
+			}
+			case 3:{
+				printf("Enter reviewers email: \n");
+				scanf("%s",Conf->papers[i].AReviewer[Conf->papers[i].noar].email);
+				Conf->papers[i].noar++;	
+				break;
+			}
+			case 4:{
+				isComp = 1;
+				break;
+			}
 		}
-		case 2:{
-			char g;
-			printf("Accept? (Y/N): ");
-			scanf("%c ",&g);
-			if(g == 'Y'|| g == 'y')
-				Conf->papers[i].isallowed = 1;
-			else Conf->papers[i].isallowed = 0;
+		updateConfF(*Conf);
+		free(Conf);
+		if(isComp)
 			break;
-		}
-		case 3:{
-			printf("Enter reviewers email: \n");
-			scanf("%s",Conf->papers[i].AReviewer[Conf->papers[i].noar].email);
-			printf("Enter reviewers password: \n");
-			scanf("%s",Conf->papers[i].AReviewer[Conf->papers[i].noar].pass);
-			Conf->papers[i].noar++;	
-			break;
-		}
-		case 4:{
-			pc_conf_portal(ConfID);
-			break;
-		}
 	}
-	updateConfF(*Conf);
-	free(Conf);
-	ScreenPaper(ConfID,i);
 }
 
 void RReviewsCompleted(int ConfID){
 	struct Conference *Conf = getConf(ConfID);
 	int flag = 1;
-	if(Conf->nor>0)
+	for(int i=0;i<Conf->nop;i++)
 	{
-		for(int i=0;i<Conf->nop;i++)
+		if(Conf->papers[i].nor<2)
+			flag = 0;
+	}
+	for(int i=0;i<Conf->nop;i++)
+	{
+		if(Conf->papers[i].isallowed == 1)
 		{
-			if(Conf->papers[i].isallowed)
+			for(int j=0;j<Conf->papers[i].nor;j++)
 			{
-				for(int j=0;j<Conf->papers[i].nor;j++)
-				{
-					if(Conf->papers[i].reviews[j].isaccepted == -1)
-						flag = 0;
-				}
+				if(Conf->papers[i].reviews[j].isaccepted == -1)
+					flag = 0;
 			}
-			else if(Conf->papers[i].isallowed == -1)
-				flag = 0;
 		}
+		else if(Conf->papers[i].isallowed == -1)
+			flag = 0;
 	}
 	Conf->ReviewsCompleted = flag;
 	updateConfF(*Conf);
@@ -88,7 +93,7 @@ void pc_conf_portal(int ConfID){
 	struct Conference *Conf = getConf(ConfID);
 	if(Conf->ReviewsCompleted&&Conf->nop){
 		for(int i=0;i<Conf->nop;i++){
-			if(Conf->papers[i].isallowed)
+			if(Conf->papers[i].isallowed == 1)
 			{
 				displayPaperDetails(Conf->papers[i]);
 				printf("Publish status of paper: (Y/N)\n");

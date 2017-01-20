@@ -11,6 +11,7 @@ void pc_conf_portal(int);
 void displayPaper(char *);
 
 void welcome_pc(){
+	CLEAR;
 	printf("Welcome to Program Committee Portal\n");
 }
 
@@ -132,7 +133,7 @@ void pc_conf_portal(int ConfID){
 
 void pc_portal(int UID){
 	welcome_pc();
-	printf("Enter the Conference ID: \n");
+	printf("Enter the Conference ID: ");
 	int ConfID = getchoice("",NET_CONF);
 	if(isPCmember(UID,ConfID)){
 		pc_conf_portal(ConfID);

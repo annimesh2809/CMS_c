@@ -135,6 +135,7 @@ void reviewer_login_portal(int UID,int ConfID){
 			case 3:{
 				printf("Successfully logged out\n");
 				logout = 1;
+				CLEAR;
 				break;
 			}
 		}

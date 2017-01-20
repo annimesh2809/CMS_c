@@ -12,15 +12,13 @@ void displayConf(struct Conference *);
 void displayPaperDetails(struct Paper);
 
 void welcome_oc(){
+	CLEAR;
 	printf("*** Welcome to the Organising Committee Portal ***\n");
 }
 
 void updateConfF(struct Conference conf)
 {
 	FILE *cf = fopen(CONF_FILE,"rb+");
-	printf("in updateConfF: \n");
-	for(int i=0;i<conf.nop;i++)
-		displayPaperDetails(conf.papers[i]);
 	struct Conference temp;
 	if(cf){
 		while(fread(&temp,sizeof(struct Conference),1,cf)){
@@ -57,6 +55,7 @@ struct Conference* getConf(int ConfID){
 
 
 void displayConf(struct Conference* conf){
+	CLEAR;
 	printf("************************** CONFERENCE DETAILS ***\n");
 	printf("* Conference ID: %d\n",conf->CONFID);
 	printf("* Conference Title: %s\n",conf->title);
@@ -72,21 +71,24 @@ void displayConf(struct Conference* conf){
 		free(u);
 	}
 	printf("\n********* Program Committee members (%d): \n",conf->nopc);
+	printf("** Sl\tUID\tName\n");
 	for(int i=0;i<conf->nopc;i++){
 		struct UserF *u = getUserByID(conf->PCID[i]);
-		printf("** %d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d\t%d\t%s\n", i+1,u->UID,u->name);
 		free(u);
 	}
 	printf("\n********* Reviewers (%d): \n",conf->nor);
+	printf("** Sl\tUID\tName\n");
 	for(int i=0;i<conf->nor;i++){
 		struct UserF *u = getUserByID(conf->RID[i]);
-		printf("** %d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d\t%d\t%s\n", i+1,u->UID,u->name);
 		free(u);
 	}
 	printf("\n********* Authors (%d): \n",conf->noa);
+	printf("** Sl\tUID\tName\n");
 	for(int i=0;i<conf->noa;i++){
 		struct UserF *u = getUserByID(conf->AID[i]);
-		printf("** %d %d %s\n", i+1,u->UID,u->name);
+		printf("** %d\t%d\t%s\n", i+1,u->UID,u->name);
 		free(u);
 	}
 }
@@ -114,17 +116,17 @@ void editConference(int UID,int confID){
 				break;
 			}
 			case 4:{
-				printf("Enter topics covered: \n");
+				printf("Enter topics covered: ");
 				scanf("%s",conf->tc);
 				break;
 			}
 			case 5:{
-				printf("Enter Deadlines\n");
+				printf("Enter Deadlines: ");
 				scanf("%s",conf->dl);
 				break;
 			}
 			case 6:{
-				printf("Enter new organising member's email\n");
+				printf("Enter new organising member's email: ");
 				char t[EMAIL_LENGTH];
 				scanf("%s",t);
 				int c = UserFfind(t);
@@ -143,7 +145,7 @@ void editConference(int UID,int confID){
 				break;
 			}
 			case 7:{
-				printf("Enter new program committee member's email\n");
+				printf("Enter new program committee member's email: ");
 				char t[EMAIL_LENGTH];
 				scanf("%s",t);
 				int c = UserFfind(t);
@@ -223,6 +225,7 @@ void oc_portal(int UID){
 		}
 		case 3:{
 			printf("Successfully logged out\n\n");
+			CLEAR;
 			main_login_portal();
 			break;
 		}

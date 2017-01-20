@@ -9,6 +9,7 @@ int NET_CONF = 0;
 void main_login_portal();
 
 void welcome(){
+	CLEAR;
 	printf("***** Welcome to Conference Management System *****\n");
 }
 
@@ -22,7 +23,7 @@ void FileError(const char *s){
 
 int getchoice(char *s,const int MAX)
 {
-	printf("** Enter choice (1 - %d)\n", MAX);
+	printf("*************************************************************\n Enter choice (1 - %d)\n", MAX);
 	printf("%s\n",s);
 	int ch;
 	do{
@@ -76,9 +77,9 @@ struct UserF* getUser(char *email,char *pass){
 
 void login_portal(){
 	char email[EMAIL_LENGTH],pass[PASS_LENGTH];
-	printf("Enter email: \n");
+	printf("Enter email: ");
 	scanf("%s",email);
-	printf("Enter password: \n");
+	printf("Enter password: ");
 	scanf("%s",pass);
 	struct UserF* user = getUser(email,pass);
 	enum UType type = user==NULL?NONE:user->type;

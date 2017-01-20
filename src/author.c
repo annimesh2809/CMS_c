@@ -11,6 +11,7 @@ void updateConfF(struct Conference);
 void main_login_portal();
 
 void welcome_author(){
+	CLEAR;
 	printf("Welcome to author portal\n");
 }
 
@@ -43,7 +44,10 @@ void displayPaper(char *src){
 	strcpy(CMD,"f='");
 	strcat(CMD,src);
 	strcat(CMD,"'; if [ ! -f $f ]; then echo 'File does not exist'; else cat $f; fi;");
+	printf("Book at loaction: %s\n",src);
+	printf("*************************************\n");
 	system(CMD);
+	printf("*************************************\n");
 }
 
 void displayPaperDetails(struct Paper p)
@@ -233,6 +237,7 @@ void author_portal(int UID){
 		}
 		case 4:{
 			printf("Successfully logged out!\n");
+			CLEAR;
 			main_login_portal();
 			break;
 		}

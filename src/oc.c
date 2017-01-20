@@ -91,6 +91,7 @@ void displayConf(struct Conference* conf){
 		printf("** %d\t%d\t%s\n", i+1,u->UID,u->name);
 		free(u);
 	}
+	printf("\n\n");
 }
 
 void editConference(int UID,int confID){

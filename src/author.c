@@ -52,10 +52,15 @@ void displayPaper(char *src){
 
 void displayPaperDetails(struct Paper p)
 {
+	printf("******************************************\n");
+	printf("PAPER DETAILS\n");
 	printf("Paper ID: %d\n",p.PID);
 	struct UserF *u = getUserByID(p.AID);
 	printf("Author: %s\n",u->name);
 	free(u);
+	printf("Title: %s\n",p.title);
+	printf("Abstract: %s\n",p.abstract);
+	printf("Affiliation: %s\n",p.affiliation);
 	if(p.isallowed == 1){
 		printf("Accpeted for publication: %s\n",(p.isaccepted >=0) ? (p.isaccepted?"True":"False") : "Waiting");
 		printf("Assigned Reviewers: \n");
@@ -72,6 +77,7 @@ void displayPaperDetails(struct Paper p)
 	}
 	else printf("Declined by program committee\n");
 	printf("Location: %s\n",p.src);
+	printf("******************************************\n\n");
 }
 
 struct Paper* getPapersByAuthor(int UID,int ConfID,int* len){
@@ -209,7 +215,6 @@ void author_portal(int UID){
 					ispresent = 1;
 			if(!ispresent)
 				Conf->AID[Conf->noa ++] = UID;
-			printf("UID: %d\n", UID);
 			strcpy(p.src,"None");
 			strcpy(p.title,"None");
 			strcpy(p.abstract,"None");

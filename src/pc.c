@@ -12,7 +12,7 @@ void displayPaper(char *);
 
 void welcome_pc(){
 	CLEAR;
-	printf("Welcome to Program Committee Portal\n");
+	printf("\nWelcome to Program Committee Portal\n");
 }
 
 int isPCmember(int UID,int ConfID){
